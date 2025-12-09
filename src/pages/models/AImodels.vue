@@ -287,7 +287,7 @@ const clearChat = () => {
             >
               <!-- User Message (Audio) -->
               <div v-if="message.type === 'user'">
-                <div class="flex items-center gap-2 mb-2 w-[300px]">
+                <div class="flex items-center gap-2 mb-2 w-full">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     class="h-5 w-5"
@@ -338,6 +338,14 @@ const clearChat = () => {
 
               <!-- Error Message -->
               <div v-if="message.type === 'error'">
+                <!-- <div class="toast toast-top toast-center z-100">
+                  <div class="alert alert-error">
+                    <p>{{ message.text }}</p>
+                    <div class="text-xs opacity-70 mt-2">
+                      {{ message.timestamp }}
+                    </div>
+                  </div>
+                </div> -->
                 <div class="flex items-center gap-2 mb-2">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -493,7 +501,7 @@ const clearChat = () => {
           </div>
 
           <!-- Error Alert -->
-          <div v-if="error" class="alert alert-error mt-3">
+          <!-- <div v-if="error" class="alert alert-error mt-3">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               class="stroke-current shrink-0 h-6 w-6"
@@ -508,7 +516,7 @@ const clearChat = () => {
               />
             </svg>
             <span class="text-sm">{{ error }}</span>
-          </div>
+          </div> -->
         </div>
       </div>
     </div>

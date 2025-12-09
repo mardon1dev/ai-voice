@@ -2,9 +2,10 @@ import { createRouter, createWebHistory } from "vue-router";
 import Main from "../pages/main/Main.vue";
 import Setting from "../pages/setting/Setting.vue";
 import Products from "../pages/products/Products.vue";
-import AIVoice from "../pages/voice/AI-voice.vue";
-import AIModels from "../pages/models/AI-models.vue";
-import AIMode from "../pages/models/AI-mode.vue";
+import AIVoice from "../pages/voice/AIvoice.vue";
+import AIModels from "../pages/models/AImodels.vue";
+// import AIMode from "../pages/models/AImode.vue";
+import Model from "../pages/models/Model.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -35,13 +36,13 @@ const router = createRouter({
     {
       path: "/ai-models",
       name: "ai-models",
-      component: AIModels,
+      component: Model,
       meta: { breadcrumb: "AI-models" },
     },
     {
       path: "/ai-mode",
       name: "ai-mode",
-      component: AIMode,
+      component: AIModels,
       meta: { breadcrumb: "AI-mode" },
     },
   ],

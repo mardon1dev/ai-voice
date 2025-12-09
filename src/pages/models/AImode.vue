@@ -176,9 +176,9 @@ const reset = () => {
                 <label class="label">
                   <span class="label-text font-semibold">Select Model</span>
                 </label>
-                <div class="flex gap-2">
+                <div class="flex-col space-x-2 space-y-2">
                   <label
-                    class="label cursor-pointer flex-1 border rounded-lg p-3 hover:bg-base-200"
+                    class="label cursor-pointer border rounded-lg p-3 hover:bg-base-200"
                   >
                     <span class="label-text">Gemini</span>
                     <input
@@ -190,7 +190,7 @@ const reset = () => {
                     />
                   </label>
                   <label
-                    class="label cursor-pointer flex-1 border rounded-lg p-3 hover:bg-base-200"
+                    class="label cursor-pointer border rounded-lg p-3 hover:bg-base-200"
                   >
                     <span class="label-text">ElevenLabs</span>
                     <input
@@ -202,7 +202,7 @@ const reset = () => {
                     />
                   </label>
                   <label
-                    class="label cursor-pointer flex-1 border rounded-lg p-3 hover:bg-base-200"
+                    class="label cursor-pointer border rounded-lg p-3 hover:bg-base-200"
                   >
                     <span class="label-text">Groq</span>
                     <input
