@@ -1,0 +1,23 @@
+{
+    "products": [
+        {
+            "id": 1,
+            "name": "Kola",
+            "price": 10000,
+            "discount": 1000,
+            "imageUrl": "https://custom-photos.com/400/400",
+            "count": 10,
+            "attribute": [
+                {
+                    "id": 1,
+                    "name": "color",
+                    "value": "sariq"
+                },
+                {
+                    "id": 2,
+                    "name": "bor"
+                }
+            ]
+        }
+    ]
+}
