@@ -1,6 +1,11 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
-
+import {
+  abbosRequest,
+  muhammadjonRequest,
+  saidaloRequest,
+  bilolxonRequest,
+} from "../../api/api";
 // --------------------
 // Reactive state
 // --------------------
@@ -10,8 +15,10 @@ const uploadedFile = ref<File | null>(null);
 const isLoading = ref(false);
 const transcriptionResult = ref<{ text?: string } | null>(null);
 const error = ref<string | null>(null);
-const selectedModel = ref<"gemini" | "elevenlabs" | "groq">("gemini");
-const selectedPerson = ref<"muhammadjon" | "saidalo">("muhammadjon");
+const selectedModel = ref<"gemini" | "elevenlabs" | "groq" | "vosk">("gemini");
+const selectedPerson = ref<"muhammadjon" | "saidalo" | "abbos" | "bilolxon">(
+  "muhammadjon"
+);
 
 const mediaRecorder = ref<MediaRecorder | null>(null);
 const audioChunks = ref<Blob[]>([]);
@@ -27,12 +34,6 @@ const audioUrl = computed<string | null>(() => {
 
 const hasAudio = computed<boolean>(
   () => !!audioBlob.value || !!uploadedFile.value
-);
-
-const formattedResult = computed<string>(() =>
-  transcriptionResult.value
-    ? JSON.stringify(transcriptionResult.value, null, 2)
-    : ""
 );
 
 const startRecording = async () => {
@@ -100,28 +101,6 @@ const handleFileUpload = (event: Event) => {
   }
 };
 
-const muhammadjonRequest = async (body: FormData) => {
-  const request = await fetch(
-    "https://710b5c68b77c.ngrok-free.app/api/v1/transcribe",
-    {
-      method: "POST",
-      headers: {
-        "ngrok-skip-browser-warning": "true",
-      },
-      body: body,
-    }
-  );
-  return request;
-};
-
-const saidaloRequest = async (body: FormData) => {
-  const request = await fetch("http://192.168.20.36:8080/api/voice/upload", {
-    method: "POST",
-    body: body,
-  });
-  return request;
-};
-
 const sendToAPI = async () => {
   const fileToSend = audioBlob.value || uploadedFile.value;
 
@@ -137,7 +116,6 @@ const sendToAPI = async () => {
     const filename = uploadedFile.value
       ? uploadedFile.value.name
       : "recording.wav";
-
     formData.append("file", fileToSend, filename);
     formData.append("model", selectedModel.value);
 
@@ -146,6 +124,10 @@ const sendToAPI = async () => {
     // Choose API based on selected person
     if (selectedPerson.value === "muhammadjon") {
       response = await muhammadjonRequest(formData);
+    } else if (selectedPerson.value === "abbos") {
+      response = await abbosRequest(formData);
+    } else if (selectedPerson.value === "bilolxon") {
+      response = await bilolxonRequest(formData);
     } else {
       response = await saidaloRequest(formData);
     }
@@ -157,7 +139,12 @@ const sendToAPI = async () => {
     const result = await response.json();
 
     transcriptionResult.value = {
-      text: result.text || result.transcription || "",
+      text:
+        result?.text ||
+        result?.transcription ||
+        result?.response ||
+        result?.data?.text ||
+        "",
     };
   } catch (err: any) {
     error.value = err?.message ?? "Failed to transcribe audio";
@@ -182,7 +169,7 @@ const reset = () => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-base-200 p-6">
+  <div class="p-6">
     <div class="max-w-7xl mx-auto">
       <h1 class="text-3xl font-bold mb-8 text-center">Voice Transcription</h1>
 
@@ -206,6 +193,8 @@ const reset = () => {
                   >
                     <option value="muhammadjon">Muhammadjon</option>
                     <option value="saidalo">Saidalo</option>
+                    <option value="abbos">Abbos</option>
+                    <option value="bilolxon">Bilolxon</option>
                   </select>
                 </div>
 
@@ -220,8 +209,30 @@ const reset = () => {
                     class="select select-bordered w-full"
                   >
                     <option value="gemini">Gemini</option>
-                    <option value="elevenlabs">ElevenLabs</option>
+
+                    <!-- ElevenLabs ONLY for muhammadjon and saidalo -->
+                    <option
+                      v-if="
+                        selectedPerson === 'muhammadjon' ||
+                        selectedPerson === 'saidalo'
+                      "
+                      value="elevenlabs"
+                    >
+                      ElevenLabs
+                    </option>
+
                     <option value="groq">Groq</option>
+
+                    <!-- Vosk ONLY for bilolxon and abbos -->
+                    <option
+                      v-if="
+                        selectedPerson === 'bilolxon' ||
+                        selectedPerson === 'abbos'
+                      "
+                      value="vosk"
+                    >
+                      Vosk
+                    </option>
                   </select>
                 </div>
               </div>
@@ -378,10 +389,10 @@ const reset = () => {
               <div v-if="transcriptionResult" class="space-y-4">
                 <div class="bg-base-200 p-4 rounded-lg">
                   <pre class="whitespace-pre-wrap text-sm">{{
-                    formattedResult
+                    transcriptionResult.text
                   }}</pre>
                 </div>
-
+                <!-- 
                 <div
                   v-if="transcriptionResult?.text"
                   class="alert alert-success"
@@ -403,7 +414,7 @@ const reset = () => {
                     <div class="font-bold">Transcribed Text:</div>
                     <div class="text-sm">{{ transcriptionResult.text }}</div>
                   </div>
-                </div>
+                </div> -->
               </div>
             </div>
           </div>

@@ -3,7 +3,9 @@ import Breadcrumb from "../breadcrumb/Breadcrumb.vue";
 </script>
 
 <template>
-  <div class="navbar bg-base-100 shadow-sm w-full sticky top-0 z-10">
+  <div
+    class="navbar bg-base-100 shadow-sm w-full sticky top-0 left-0 right-0 z-10"
+  >
     <label
       for="my-drawer-4"
       aria-label="open sidebar"

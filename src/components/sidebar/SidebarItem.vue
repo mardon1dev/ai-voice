@@ -10,11 +10,7 @@ defineProps<{
 
 <template>
   <li>
-    <RouterLink
-      class="is-drawer-close:tooltip is-drawer-close:tooltip-right"
-      :data-tip="label"
-      :to="to"
-    >
+    <RouterLink :data-tip="label" :to="to">
       <!-- <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 24 24"

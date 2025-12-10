@@ -23,27 +23,20 @@ import { useRoute, type RouteLocationMatched } from "vue-router";
 
 const route = useRoute();
 
-console.log(route);
-
-
 const breadcrumbs = computed(() => {
-  return (
-    route.matched
-      .filter(
-        (match: RouteLocationMatched) => match.meta && match.meta.breadcrumb
-      )
-      .map((match: RouteLocationMatched) => {
-        const name =
-          (match.meta.breadcrumb as string) || (match.name as string);
+  return route.matched
+    .filter(
+      (match: RouteLocationMatched) => match.meta && match.meta.breadcrumb
+    )
+    .map((match: RouteLocationMatched) => {
+      const name = (match.meta.breadcrumb as string) || (match.name as string);
 
-        return {
-          path: match.path,
-          name: name,
-        };
-      })
-      .filter((breadcrumb) => breadcrumb.path !== "/")
-  );
+      return {
+        path: match.path,
+        name: name,
+      };
+    })
+    .filter((breadcrumb) => breadcrumb.path !== "/");
 });
 console.log(breadcrumbs.value);
-
 </script>

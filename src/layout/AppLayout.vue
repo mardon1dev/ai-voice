@@ -4,16 +4,13 @@ import Sidebar from "../components/sidebar/Sidebar.vue";
 </script>
 
 <template>
-  <div class="drawer lg:drawer-open">
-    <input id="my-drawer-4" type="checkbox" class="drawer-toggle" />
-
-    <div class="drawer-content">
+  <div class="flex items-start w-full">
+    <Sidebar />
+    <div class="relative w-full h-full overflow-scroll">
       <Navbar />
-      <div class="p-2">
+      <div class="p-2 bg-base-300 h-full">
         <router-view />
       </div>
     </div>
-
-    <Sidebar />
   </div>
 </template>

@@ -1,5 +1,10 @@
 <script setup lang="ts">
 import { ref, computed, nextTick } from "vue";
+import {
+  abbosRequest,
+  muhammadjonRequest,
+  saidaloRequest,
+} from "../../api/api";
 
 type MessageType = "user" | "assistant" | "error";
 
@@ -13,8 +18,8 @@ interface ChatMessage {
 }
 
 // --- States ---
-const selectedAPI = ref<"muhammadjon" | "saidalo">("muhammadjon");
-const selectedModel = ref<"gemini" | "elevenlabs" | "groq">("gemini");
+const selectedAPI = ref<"muhammadjon" | "saidalo" | "abbos">("muhammadjon");
+const selectedModel = ref<"gemini" | "elevenlabs" | "groq" | "vosk">("gemini");
 
 const isRecording = ref(false);
 const audioBlob = ref<Blob | null>(null);
@@ -108,28 +113,6 @@ const removeAudio = () => {
   if (fileInput) fileInput.value = "";
 };
 
-const muhammadjonRequest = async (body: FormData) => {
-  const request = await fetch(
-    "https://710b5c68b77c.ngrok-free.app/api/v1/transcribe",
-    {
-      method: "POST",
-      headers: {
-        "ngrok-skip-browser-warning": "true",
-      },
-      body: body,
-    }
-  );
-  return request;
-};
-
-const saidaloRequest = async (body: FormData) => {
-  const request = await fetch("http://192.168.20.36:8080/api/voice/upload", {
-    method: "POST",
-    body: body,
-  });
-  return request;
-};
-
 // --- Send To API ---
 const sendToAPI = async () => {
   const fileToSend = audioBlob.value || uploadedFile.value;
@@ -156,6 +139,8 @@ const sendToAPI = async () => {
     // Choose API based on selected person
     if (selectedAPI.value === "muhammadjon") {
       response = await muhammadjonRequest(formData);
+    } else if (selectedAPI.value === "abbos") {
+      response = await abbosRequest(formData);
     } else {
       response = await saidaloRequest(formData);
     }
@@ -167,7 +152,7 @@ const sendToAPI = async () => {
     messages.value.push({
       id: Date.now() + 1,
       type: "assistant",
-      text: result.text || result.transcription || "",
+      text: result.text || result.transcription || result.text.response || "",
       timestamp: new Date().toLocaleTimeString(),
     });
 
@@ -193,7 +178,7 @@ const clearChat = () => {
 };
 </script>
 <template>
-  <div class="min-h-screen bg-base-200 flex flex-col">
+  <div class="flex flex-col">
     <!-- Header -->
     <div class="bg-base-100 shadow p-4">
       <div class="max-w-6xl mx-auto flex justify-between items-center">
@@ -208,6 +193,7 @@ const clearChat = () => {
             >
               <option value="muhammadjon">Muhammadjon</option>
               <option value="saidalo">Saidalo</option>
+              <option value="abbos">Abbos</option>
             </select>
           </div>
 
@@ -219,8 +205,16 @@ const clearChat = () => {
               class="select select-bordered w-full mb-3"
             >
               <option value="gemini">Gemini</option>
-              <option value="elevenlabs">ElevenLabs</option>
+              <option
+                v-if="selectedAPI.valueOf() !== 'abbos'"
+                value="elevenlabs"
+              >
+                ElevenLabs
+              </option>
               <option value="groq">Groq</option>
+              <option v-if="selectedAPI.valueOf() === 'abbos'" value="vosk">
+                Vosk
+              </option>
             </select>
           </div>
         </div>
@@ -259,7 +253,7 @@ const clearChat = () => {
               :class="[
                 'max-w-lg rounded-lg p-4',
                 m.type === 'user'
-                  ? 'bg-primary text-primary-content'
+                  ? 'bg-primary text-primary-content w-[200px]'
                   : m.type === 'assistant'
                   ? 'bg-base-100 shadow'
                   : 'bg-error text-error-content',
@@ -298,12 +292,12 @@ const clearChat = () => {
         </div>
 
         <!-- Input Controls -->
-        <div class="bg-base-100 p-4 shadow rounded-lg fixed bottom-2 right-0">
+        <div class="bg-base-100 p-4 shadow rounded-lg mt-2">
           <!-- Preview + Remove -->
-          <div v-if="audioUrl" class="mb-3">
-            <audio controls :src="audioUrl" class="w-full mb-2" />
-            <button class="btn btn-sm btn-error w-full" @click="removeAudio">
-              Remove Audio
+          <div v-if="audioUrl" class="mb-3 flex items-center gap-2">
+            <audio controls :src="audioUrl" class="w-full" />
+            <button class="btn btn-error" @click="removeAudio">
+              Remove
             </button>
           </div>
 

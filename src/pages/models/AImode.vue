@@ -160,7 +160,7 @@ const reset = () => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-base-200 p-6">
+  <div class="p-6">
     <div class="max-w-7xl mx-auto">
       <h1 class="text-3xl font-bold mb-8 text-center">Voice Transcription</h1>
 
